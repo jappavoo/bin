@@ -1,0 +1,42 @@
+#!/bin/bash
+# rows of multiple tails to columns
+#set -x
+keys=( $1 )
+VALREGEX="$2"
+VALIDX=${3:-1}
+set -u
+
+#HEADERREGEX=${L2C_HEADERREGEX:-"^(==> )(.*)( <==)"}
+HEADERREGEX=${L2C_HEADERREGEX:-"^==> (.*)( <==)"}
+declare -A columns
+declare -i numkeys=${#keys[@]}
+while read line; do
+    #echo $line
+    [[ -z $line ]] && continue
+    if [[ $line =~ ${HEADERREGEX} ]]; then
+	c="${BASH_REMATCH[1]}"
+	c=${c##*/}
+	#echo column: $c
+    else
+	if [[ -n $VALREGEX ]]; then
+	    if [[ $line =~ ${VALREGEX} ]]; then
+		columns[$c]=${BASH_REMATCH[$VALIDX]}
+	    fi
+	else
+	    columns[$c]=${line}
+	fi
+	#echo "- $c: $line : ${columns[$c]}"
+	if (( $numkeys > 0 )); then
+	 if (( ${#columns[@]} >= $numkeys )); then
+	    for k in ${keys[@]};do
+		printf "${columns[$k]} "
+	    done
+	    printf "\n"
+	 fi
+	else
+	    echo ${columns[@]}
+	fi
+    fi
+done
+
+
