@@ -1,5 +1,7 @@
 #!/bin/bash
 # rows of multiple tails to columns
+#  tail -f /tmp/a -f /tmp/b -f /tmp/c | ./l2c 'a b c' '^.*FOO=(.*) .*'
+
 #set -x
 keys=( $1 )
 VALREGEX="$2"
