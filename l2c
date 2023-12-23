@@ -1,9 +1,20 @@
 #!/bin/bash
 # rows of multiple tails to columns
-#  tail -f /tmp/a -f /tmp/b -f /tmp/c | ./l2c 'a b c' '^.*FOO=(.*) .*'
+#  tail -f /tmp/a -f /tmp/b -f /tmp/c | ./l2c 'a,b,c' '^.*FOO=(.*) .*'
 
 #set -x
-keys=( $1 )
+declare -a keys
+k="$1"
+declare -i i=0
+# load key array from comma seperated first argument
+while [[ -n $k ]]; do
+    keys[$i]="${k%%,*}"
+    k="${k#*,}"
+    [[ "${keys[$i]}" == "$k" ]] && k="" 
+    ((i++))
+done
+keys=( ${keys[@]// /} )
+#echo ${#keys[@]} ${keys[@]}
 VALREGEX="$2"
 VALIDX=${3:-1}
 set -u
@@ -17,24 +28,30 @@ while read line; do
     [[ -z $line ]] && continue
     if [[ $line =~ ${HEADERREGEX} ]]; then
 	c="${BASH_REMATCH[1]}"
-	c=${c##*/}
-	#echo column: $c
+	c="${c##*/}"
+	c="${c// /}"
+	#echo "column: $c -> ${!columns[@]}"
     else
 	if [[ -n $VALREGEX ]]; then
 	    if [[ $line =~ ${VALREGEX} ]]; then
-		columns[$c]=${BASH_REMATCH[$VALIDX]}
+		columns["$c"]=${BASH_REMATCH[$VALIDX]}
 	    fi
 	else
-	    columns[$c]=${line}
+	    columns["$c"]=${line}
 	fi
 	#echo "- $c: $line : ${columns[$c]}"
 	if (( $numkeys > 0 )); then
-	 if (( ${#columns[@]} >= $numkeys )); then
-	    for k in ${keys[@]};do
-		printf "${columns[$k]} "
-	    done
-	    printf "\n"
-	 fi
+	    if (( ${#columns[@]} >= $numkeys )); then
+		out=""
+		for k in ${keys[@]}; do
+		    [[ -v columns["$k"] ]] && {
+			#echo "$k" in "${!columns[@]}"
+			printf "%s" ${columns["$k"]} 
+			out=1
+		    }
+		done
+		[[ -n $out ]] &&  printf "\n"
+	    fi
 	else
 	    echo ${columns[@]}
 	fi
