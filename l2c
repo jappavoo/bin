@@ -1,6 +1,14 @@
 #!/bin/bash
 # rows of multiple tails to columns
-#  tail -f /tmp/a -f /tmp/b -f /tmp/c | ./l2c 'a,b,c' '^.*FOO=(.*) .*'
+# every time a new value is read from any of the monoitored files a single row of space separated output will be generated
+# where the row is composed of the last line of each file.
+# to control the order you can provide a comma seperated list of the file names
+# additionally you can provide a regular expression to extract a specific value from each line of the files
+# Eg
+#
+# $ RE='.*numRecordsOutPerSecond....value....([[:digit:].]*).*'
+# $ tail -n 1 -f ~/tmp/Flinklogs/Operator_Source\:\ Bids\ Source_{0..3} | ./l2c 'Operator_Source: Bids Source_0,Operator_Source: Bids Source_1,Operator_Source: Bids Source_2,Operator_Source: Bids Source_3' "$RE"
+#26357.75 26390.133333333335 26358.283333333333 26364.066666666666 
 
 #set -x
 declare -a keys
@@ -46,7 +54,7 @@ while read line; do
 		for k in ${keys[@]}; do
 		    [[ -v columns["$k"] ]] && {
 			#echo "$k" in "${!columns[@]}"
-			printf "%s" ${columns["$k"]} 
+			printf "%s " ${columns["$k"]} 
 			out=1
 		    }
 		done
