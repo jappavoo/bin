@@ -1,19 +1,25 @@
 #!/bin/bash
+#set -x
+destdir=~/bin
+install=( avg avgtm l2c livegraph myaliases dircolors:~/.dircolors)
 
-dest=~/bin
-install=( avg avgtm l2c livegraph myaliases dircolors:.dircolors)
-
-if [[ ! -d $dest ]]; then
-   mkdir -p $dest || echo "ERROR: mkdir $dest failed." >> /dev/stderr; exit -1 
+if [[ ! -d $destdir ]]; then
+    mkdir -p $destdir ||
+	echo "ERROR: mkdir $destdir failed." >> /dev/stderr; exit -1 
 fi
 
 for f in ${install[@]}; do
     s=${f%%:*}
     d=${f##*:}
-    if  [[ ! -a $dest/$d ]]; then
-	cp -s $(realpath $s) $dest/$d
+    if [[ $s == $d ]]; then
+	dest=$destdir/$d
     else
-	echo "Skipping install of $s to $dest/$d: already exists." >>/dev/stderr
+	dest=$d
+    fi
+    if  [[ ! -a $dest ]]; then
+	eval cp -s $(realpath $s) $dest
+    else
+	echo "Skipping install of $s to $dest: already exists." >>/dev/stderr
     fi
 done
 
