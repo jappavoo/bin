@@ -1,0 +1,23 @@
+[user]
+	email = jappavoo@bu.edu
+	name = Jonathan Appavoo
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+  interactive = auto
+  ui = true
+  pager = true
+  
+[color "status"]
+  added = bold
+  changed =  bold ul
+  untracked = reverse
+
+[color "branch"]
+  remote = bold
+
+[color "diff"]
+  new = bold 
+  old = italic
+  

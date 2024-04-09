@@ -1,7 +1,8 @@
 #!/bin/bash
 #set -x
 destdir=~/bin
-install=( avg avgtm l2c livegraph myaliases dircolors:~/.dircolors)
+install=( avg avgtm l2c livegraph myaliases dircolors:~/.dircolors grepcolors
+	  gitconfig:~/.gitconfig )
 
 if [[ ! -d $destdir ]]; then
     mkdir -p $destdir ||
@@ -30,8 +31,22 @@ if [[ -a ~/bin/myaliases ]]; then
     . ~/bin/myaliases
 fi
 EOF
-    echo "~/.bashrc updated"
+    echo "~/.bashrc updated with myalaises"
 else
     echo "Skipping update of ~/.bashrc as it seems to already"\
 	 " have myaliases." >> /dev/stderr
+fi
+
+
+
+if ! grep -q '~/bin/grepcolors' ~/.bashrc; then
+    cat >> ~/.bashrc  <<EOF
+if [[ -a ~/bin/grepcolors ]]; then
+    . ~/bin/grepcolors
+fi
+EOF
+    echo "~/.bashrc updated with grepcolors"
+else
+    echo "Skipping update of ~/.bashrc as it seems to already"\
+	 " have grepcolors." >> /dev/stderr
 fi
