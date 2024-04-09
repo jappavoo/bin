@@ -1,0 +1,29 @@
+#!/bin/bash
+
+dest=~/bin
+install=( avg avgtm l2c livegraph myaliases )
+
+if [[ ! -d $dest ]]; then
+   mkdir -p $dest || echo "ERROR: mkdir $dest failed." >> /dev/stderr; exit -1 
+fi
+
+for f in ${install[@]}; do
+    if  [[ ! -a $dest/$f ]]; then
+	cp -s $(realpath $f) $dest/$f
+    else
+	echo "Skipping install of $f to $dest/$f: already exists." >>/dev/stderr
+    fi
+done
+
+
+if ! grep -q '~/bin/myaliases' ~/.bashrc; then
+    cat >> ~/.bashrc  <<EOF
+if [[ -a ~/bin/myaliases ]]; then
+    . ~/bin/myaliases
+fi
+EOF
+    echo "~/.bashrc updated"
+else
+    echo "Skipping update of ~/.bashrc as it seems to already"\
+	 " have myaliases." >> /dev/stderr
+fi
