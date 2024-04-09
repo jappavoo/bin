@@ -12,12 +12,12 @@ for f in ${install[@]}; do
     s=${f%%:*}
     d=${f##*:}
     if [[ $s == $d ]]; then
-	dest=$destdir/$d
+	eval dest=$destdir/$d
     else
-	dest=$d
+	eval dest=$d
     fi
     if  [[ ! -a $dest ]]; then
-	eval cp -s $(realpath $s) $dest
+        cp -s $(realpath $s) $dest
     else
 	echo "Skipping install of $s to $dest: already exists." >>/dev/stderr
     fi

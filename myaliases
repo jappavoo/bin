@@ -2,3 +2,5 @@ alias gl="git log --decorate --oneline --graph"
 alias gll="gl --all"
 alias gf='git show --pretty="" --name-only'
 alias gcat='git show '
+alias e='emacs --no-init'
+
