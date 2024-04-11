@@ -3,6 +3,7 @@ alias gll="gl --all"
 alias gf='git show --pretty="" --name-only'
 alias gcat='git show '
 alias e='emacs --no-init'
-alias grep='grep -bRniIH --color=auto'
+alias grepf='grep -bRniIH --color=auto'
+alias fgrep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
